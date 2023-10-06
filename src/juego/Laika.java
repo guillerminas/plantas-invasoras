@@ -30,25 +30,20 @@ public class Laika {
 
     public void dibujarse(Entorno entorno) { entorno.dibujarImagen(img[this.direccion], this.x, this.y, 0,0.15);}
 
-    public void mover(int d, Entorno e)
-    {
+    public void mover(int d, Entorno e) {
 
-        this.direccion=d;
+        this.direccion = d;
 
-        if (direccion ==0)
-        {
+        if (direccion == 0) {
             y-= this.velocidad;
         }
-        if (direccion ==1)
-        {
+        if (direccion == 1) {
             x+= this.velocidad;
         }
-        if (direccion ==2)
-        {
+        if (direccion == 2) {
             y+= this.velocidad;
         }
-        if (direccion ==3)
-        {
+        if (direccion == 3) {
             x-= this.velocidad;
         }
 
