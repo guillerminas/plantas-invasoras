@@ -46,33 +46,20 @@ public class Juego extends InterfaceJuego {
 	 */
 	public void tick() {
 		// Procesamiento de un instante de tiempo
-		// ...
-
 		if (entorno.estaPresionada(entorno.TECLA_DERECHA) && restriccionm(manzanas, laika) != 1) {
-			laika.mover(1, this.entorno);
-
-		}
-		if (entorno.estaPresionada(entorno.TECLA_ARRIBA) && restriccionm(manzanas, laika) != 0) {
-			laika.mover(0, this.entorno);
-
-		}
-
-		if (entorno.estaPresionada(entorno.TECLA_ABAJO) && restriccionm(manzanas, laika) != 2) {
-			laika.mover(2, this.entorno);
-
-		}
-
-		if (entorno.estaPresionada(entorno.TECLA_IZQUIERDA) && restriccionm(manzanas, laika) != 3) {
-			laika.mover(3, this.entorno);
-
+			laika.mover(1,this.entorno);
+		} else if (entorno.estaPresionada(entorno.TECLA_IZQUIERDA) && restriccionm(manzanas, laika) != 3) {
+			laika.mover(3,this.entorno);
+		} else if (entorno.estaPresionada(entorno.TECLA_ABAJO) && restriccionm(manzanas, laika) != 2) {
+			laika.mover(2,this.entorno);
+		} else if (entorno.estaPresionada(entorno.TECLA_ARRIBA) && restriccionm(manzanas, laika) != 0) {
+			laika.mover(0,this.entorno);
 		}
 
 		for (int i = 0; i < manzanas.length; i++) {
 			manzanas[i].dibujarse(this.entorno);
 		}
 		laika.dibujarse(this.entorno);
-
-
 		// entorno.cambiarFont("Arial", 18, Color.white);
 
 		entorno.escribirTexto("posicion en x:" + laika.x, 600, 50);
@@ -82,32 +69,34 @@ public class Juego extends InterfaceJuego {
 
 	private int restriccionm(Manzana[] m, Laika a) {
 		for (int i = 0; i < m.length; i++) {
-			if (restriccion(m[i], a) < 5) {
-				return restriccion(m[i], a);
+			if (estaTocando(m[i], a) < 5) {
+				return estaTocando(m[i], a);
 			}
 		}
 		return 5;
 	}
 
-	public int restriccion(Manzana m, Laika a) {
-		double zona1 = m.x - m.ancho / 2;
-		double zona2 = m.y - m.alto / 2;
-		double zona0 = m.y + m.alto / 2;
-		double zona3 = m.x + m.ancho / 2;
-		if (a.y > zona2 && a.y < zona0 && a.x > zona1 - 30 && a.x < zona3) {
+	public int estaTocando(Manzana m, Laika a) {
+		double borde_derecho = m.x - m.ancho / 2;
+		double borde_abajo = m.y - m.alto / 2;
+		double borde_arriba = m.y + m.alto / 2;
+		double borde_izquierdo = m.x + m.ancho / 2;
+		if (a.y > borde_abajo && a.y < borde_arriba && a.x > borde_derecho - 40 && a.x < borde_izquierdo) {
 			return 1;
 		}
-		if (a.y > zona2 && a.y < zona0 && a.x > zona1 && a.x < zona3 + 30) {
+		if (a.y > borde_abajo && a.y < borde_arriba && a.x > borde_derecho && a.x < borde_izquierdo + 40) {
 			return 3;
 		}
-		if (a.y > zona2 - 30 && a.y < zona0 && a.x > zona1 && a.x < zona3) {
+		if (a.y > borde_abajo - 40 && a.y < borde_arriba && a.x > borde_derecho && a.x < borde_izquierdo) {
 			return 2;
 		}
-		if (a.y > zona2 && a.y < zona0 + 30 && a.x > zona1 && a.x < zona3) {
+		if (a.y > borde_abajo && a.y < borde_arriba + 40 && a.x > borde_derecho && a.x < borde_izquierdo) {
 			return 0;
 		}
 		return 5;
 	}
+
+
 	public static void main(String[] args) {
 		Juego juego = new Juego();
 	}
