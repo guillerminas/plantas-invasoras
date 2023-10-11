@@ -19,7 +19,7 @@ public class Laika {
         this.x = x;
         this.y = y;
         this.direccion = 1;
-        this.velocidad = 10;
+        this.velocidad = 3.5;
         this.img = new Image[4];
         for (int i = 0; i < img.length; i++) {
 
@@ -57,11 +57,11 @@ public class Laika {
         if (x < -50.0) {
             this.x = e.ancho() + 50.0;
         }
-        if (y > e.alto() - 10.0) {
+        if (y > e.alto() - 20) {
             this.y = -30.0;
         }
         if (y < -50.0) {
-            this.y = e.alto() - 10.0;
+            this.y = e.alto() - 20;
         }
     }
 }

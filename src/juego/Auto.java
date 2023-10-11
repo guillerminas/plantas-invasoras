@@ -18,7 +18,7 @@ public class Auto {
         img = Herramientas.cargarImagen("source/auto.png");
         this.ancho = img.getWidth(null) * this.escala;
         this.alto = img.getHeight(null) * this.escala;
-        this.velocidad = 10;
+        this.velocidad = 3;
         this.x = x;
         this.y = y;
     }
@@ -28,11 +28,19 @@ public class Auto {
     }
 
     public void mover(int d, Entorno e) {
-        this.direccion = d;
+        if (this.direccion == 1) {
+            this.x += velocidad;
+        }
+        if (this.direccion == 3) {
+            this.x -= velocidad;
+        }
         // Mover el auto hacia la derecha (de izquierda a derecha)
-        x += velocidad;
-        if (x > e.ancho() + 50) {
-            x = -40; // Reiniciar el auto al llegar al final de la pantalla
+
+        if (x > e.ancho() - 30) {
+            this.direccion = 3;
+        }
+        if (x < 20) {
+            this.direccion = 1;
         }
     }
 }
