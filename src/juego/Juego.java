@@ -20,20 +20,28 @@ public class Juego extends InterfaceJuego {
 
     public Juego() {
         // Inicializa el objeto entorno
-        this.entorno = new Entorno(this, "Plantas Invasoras - Grupo ... - v1", 1024, 768);
+        this.entorno = new Entorno(this, "Plantas Invasoras - Grupo 2 - v1", 1024, 768);
 
         // Inicializar lo que haga falta para el juego
-        autos = new Auto[1];
-        autos[0] = new Auto(50, 330, 0.35);
         barra = new Barra((double) this.entorno.ancho() / 2, this.entorno.alto() - 20, this.entorno.ancho(), 80);
         laika = new Laika((double) 1024 / 2, barra.y - barra.alto);
         manzanas = new Manzana[fila][columna];
-        manzanas[0][0] = new Manzana((double) (1024 / 2) / 2.3, (double) (768 / 2) / 1.8, 0.30);
-        manzanas[0][1] = new Manzana((double) (1024 / 2), (double) (768 / 2) / 1.8, 0.30);
-        manzanas[0][2] = new Manzana((double) (1024 / 2) * 1.56, (double) (768 / 2) / 1.8, 0.30);
-        manzanas[1][0] = new Manzana((double) (1024 / 2) / 2.3, (double) (768 / 2) * 1.3, 0.30);
-        manzanas[1][1] = new Manzana((double) (1024 / 2), (double) (768 / 2) * 1.3, 0.30);
-        manzanas[1][2] = new Manzana((double) (1024 / 2) * 1.56, (double) (768 / 2) * 1.3, 0.30);
+        double y0 = (768 / 2) / 1.8;
+        double y1 = (768 / 2) * 1.3;
+        manzanas[0][0] = new Manzana((double) (1024 / 2) / 2.3, y0, 0.30);
+        manzanas[0][1] = new Manzana((double) (1024 / 2), y0, 0.30);
+        manzanas[0][2] = new Manzana((double) (1024 / 2) * 1.56, y0, 0.30);
+        manzanas[1][0] = new Manzana((double) (1024 / 2) / 2.3, y1, 0.30);
+        manzanas[1][1] = new Manzana((double) (1024 / 2), y1, 0.30);
+        manzanas[1][2] = new Manzana((double) (1024 / 2) * 1.56, y1, 0.30);
+        autos = new Auto[4];
+        for (int i = 0; i < autos.length; i++) {
+            if (i % 2 == 0) {
+                autos[i] = new Auto(30, 255 * i + this.entorno.alto() / 7.5, 0.30, 1);
+            } else {
+                autos[i] = new Auto(260 * i + this.entorno.ancho() / 7.5, 30, 0.30, 2);
+            }
+        }
 
 
         // Inicia el juego!
@@ -69,8 +77,13 @@ public class Juego extends InterfaceJuego {
         }
 
         for (int i = 0; i < autos.length; i++) {
-            autos[i].dibujarse(this.entorno);
-            autos[i].mover(1, this.entorno);
+            if (i % 2 == 0) {
+                autos[i].dibujarse(this.entorno);
+                autos[i].mover(this.entorno);
+            } else {
+                autos[i].dibujarse(this.entorno);
+                autos[i].mover(this.entorno);
+            }
         }
 
         laika.dibujarse(this.entorno);
@@ -84,29 +97,29 @@ public class Juego extends InterfaceJuego {
     private int restriccionm(Manzana[][] m, Laika a) {
         for (int i = 0; i < fila; i++) {
             for (int j = 0; j < columna; j++)
-                if (estaTocando(m[i][j], a, 50) < 5) {
-                    return estaTocando(m[i][j], a, 50);
+                if (estaTocando(m[i][j], a, 35) < 5) {
+                    return estaTocando(m[i][j], a, 35);
                 }
         }
         return 5;
     }
 
     public int estaTocando(Manzana m, Laika a, double guarda) {
-        double borde_izquierdo = m.x - m.ancho / 2;
-        double borde_arriba = m.y - m.alto / 2;
-        double borde_abajo = m.y + m.alto / 2;
-        double borde_derecho = m.x + m.ancho / 2;
+        double lado_izquierdo = m.x - m.ancho / 2;
+        double lado_arriba = m.y - m.alto / 2;
+        double lado_abajo = m.y + m.alto / 2;
+        double lado_derecho = m.x + m.ancho / 2;
 
-        if (a.y < borde_abajo && a.y > borde_arriba && a.x > borde_izquierdo - guarda && a.x < borde_derecho) {
+        if (a.y < lado_abajo && a.y > lado_arriba && a.x > lado_izquierdo - guarda && a.x < lado_derecho) {
             return 1;
         }
-        if (a.y < borde_abajo && a.y > borde_arriba && a.x > borde_izquierdo && a.x < borde_derecho + guarda) {
+        if (a.y < lado_abajo && a.y > lado_arriba && a.x > lado_izquierdo && a.x < lado_derecho + guarda) {
             return 3;
         }
-        if (a.y < borde_abajo && a.y > borde_arriba - guarda && a.x > borde_izquierdo && a.x < borde_derecho) {
+        if (a.y < lado_abajo && a.y > lado_arriba - guarda && a.x > lado_izquierdo && a.x < lado_derecho) {
             return 2;
         }
-        if (a.y < borde_abajo + guarda && a.y > borde_arriba && a.x > borde_izquierdo && a.x < borde_derecho) {
+        if (a.y < lado_abajo + guarda && a.y > lado_arriba && a.x > lado_izquierdo && a.x < lado_derecho) {
             return 0;
         }
         return 5;
