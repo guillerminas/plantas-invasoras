@@ -8,26 +8,25 @@ import entorno.Herramientas;
 public class Auto {
     // Variables de instancia
     Image img;
-    double x, y, ancho, alto, escala;
-    int velocidad;
+    double x, y, ancho, alto, velocidad, escala;
     int direccion;
 
-    Auto(double x, double y, double e, int direccion) {
+    Auto(double x, double y, double e, double velocidad, int direccion) {
         this.escala = e;
         img = Herramientas.cargarImagen("source/auto.png");
         this.ancho = img.getWidth(null) * this.escala;
         this.alto = img.getHeight(null) * this.escala;
         this.direccion = direccion;
-        this.velocidad = 3;
+        this.velocidad = velocidad;
         this.x = x;
         this.y = y;
     }
 
-    public void dibujarse(Entorno entorno) {
+    void dibujarse(Entorno entorno) {
         entorno.dibujarImagen(img, this.x, this.y, 0, this.escala);
     }
 
-    public void mover(Entorno e) {
+    void mover(Entorno e) {
         if (direccion == 0) {
             y -= this.velocidad;
         }

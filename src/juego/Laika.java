@@ -7,33 +7,37 @@ import entorno.Herramientas;
 
 public class Laika {
     // Variables de instancia
-    double x;
-    double y;
-    double velocidad;
+    double x, y, ancho, alto, velocidad, escala;
     int direccion;
     Image[] img;
 
-//constructor
+    // constructor
 
-    public Laika(double x, double y) {
+    Laika(double x, double y) {
         this.x = x;
         this.y = y;
         this.direccion = 1;
         this.velocidad = 3.5;
+        this.escala = 0.10;
         this.img = new Image[4];
         for (int i = 0; i < img.length; i++) {
-
             img[i] = Herramientas.cargarImagen("source/Imagen" + i + ".png");
-
         }
-
     }
 
-    public void dibujarse(Entorno entorno) {
-        entorno.dibujarImagen(img[this.direccion], this.x, this.y, 0, 0.10);
+    void dibujarse(Entorno entorno) {
+        entorno.dibujarImagen(img[this.direccion], this.x, this.y, 0, this.escala);
     }
 
-    public void mover(int d, Entorno e) {
+    double getWidth() {
+        return img[this.direccion].getWidth(null) * this.escala;
+    }
+
+    double getHeight() {
+        return img[this.direccion].getHeight(null) * this.escala;
+    }
+
+    void mover(int d, Entorno e) {
 
         this.direccion = d;
 
@@ -50,15 +54,14 @@ public class Laika {
             x -= this.velocidad;
         }
 
-
         if (x > e.ancho() - 32) {
             this.x = e.ancho() - 32;
         }
         if (x < 30) {
             this.x = 30.0;
         }
-        if (y > e.alto() - 85) {
-            this.y = e.alto() - 85;
+        if (y > e.alto() - 90) {
+            this.y = e.alto() - 90;
         }
         if (y < 30) {
             this.y = 30;

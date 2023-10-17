@@ -1,6 +1,7 @@
 package juego;
 
 import java.awt.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 import entorno.Entorno;
 import entorno.Herramientas;
@@ -13,36 +14,48 @@ public class Juego extends InterfaceJuego {
     // Variables y métodos propios de cada grupo
     Laika laika;
     Barra barra;
-    Manzana[][] manzanas;
     Auto[] autos;
-    int fila = 2;
-    int columna = 3;
+    Manzana[][] manzanas;
+
+    // Variables de setup
+    int row = 2;
+    int column = 3;
+    int carsAmount = 4;
 
     public Juego() {
         // Inicializa el objeto entorno
         this.entorno = new Entorno(this, "Plantas Invasoras - Grupo 2 - v1", 1024, 768);
 
+        // Medidas de la pantalla
+        int windowX = this.entorno.ancho();
+        double windowMiddle = windowX * 0.5;
+        int windowY = this.entorno.alto();
+
         // Inicializar lo que haga falta para el juego
-        barra = new Barra((double) this.entorno.ancho() / 2, this.entorno.alto() - 20, this.entorno.ancho(), 80);
-        laika = new Laika((double) 1024 / 2, barra.y - barra.alto);
-        manzanas = new Manzana[fila][columna];
-        double y0 = (768 / 2) / 1.8;
-        double y1 = (768 / 2) * 1.3;
-        manzanas[0][0] = new Manzana((double) (1024 / 2) / 2.3, y0, 0.30);
-        manzanas[0][1] = new Manzana((double) (1024 / 2), y0, 0.30);
-        manzanas[0][2] = new Manzana((double) (1024 / 2) * 1.56, y0, 0.30);
-        manzanas[1][0] = new Manzana((double) (1024 / 2) / 2.3, y1, 0.30);
-        manzanas[1][1] = new Manzana((double) (1024 / 2), y1, 0.30);
-        manzanas[1][2] = new Manzana((double) (1024 / 2) * 1.56, y1, 0.30);
-        autos = new Auto[4];
+        barra = new Barra(windowMiddle, windowY - 20, windowX, 80);
+        laika = new Laika(windowMiddle, barra.y - barra.alto);
+
+        // Setup Manzanas
+        manzanas = new Manzana[row][column];
+        double row0 = (768 / 2) / 1.8;
+        double row1 = (768 / 2) * 1.3;
+        manzanas[0][0] = new Manzana(windowMiddle / 2.3, row0, 0.30);
+        manzanas[0][1] = new Manzana(windowMiddle, row0, 0.30);
+        manzanas[0][2] = new Manzana(windowMiddle * 1.56, row0, 0.30);
+        manzanas[1][0] = new Manzana(windowMiddle / 2.3, row1, 0.30);
+        manzanas[1][1] = new Manzana(windowMiddle, row1, 0.30);
+        manzanas[1][2] = new Manzana(windowMiddle * 1.56, row1, 0.30);
+
+        // Setup Autos
+        autos = new Auto[carsAmount];
         for (int i = 0; i < autos.length; i++) {
+            double random = ThreadLocalRandom.current().nextDouble(1.5, 5);
             if (i % 2 == 0) {
-                autos[i] = new Auto(30, 255 * i + this.entorno.alto() / 7.5, 0.30, 1);
+                autos[i] = new Auto(30, 255 * i + windowY / 7.5, 0.30, random, 1);
             } else {
-                autos[i] = new Auto(260 * i + this.entorno.ancho() / 7.5, 30, 0.30, 2);
+                autos[i] = new Auto(260 * i + windowX / 7.5, 30, 0.30, random, 2);
             }
         }
-
 
         // Inicia el juego!
         this.entorno.iniciar();
@@ -69,9 +82,8 @@ public class Juego extends InterfaceJuego {
             laika.mover(0, this.entorno);
         }
 
-
-        for (int i = 0; i < fila; i++) {
-            for (int j = 0; j < columna; j++) {
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < column; j++) {
                 manzanas[i][j].dibujarse(this.entorno);
             }
         }
@@ -80,9 +92,17 @@ public class Juego extends InterfaceJuego {
             if (i % 2 == 0) {
                 autos[i].dibujarse(this.entorno);
                 autos[i].mover(this.entorno);
+                if (colissionCheck(autos[i])) {
+                    laika.x = this.entorno.ancho() * 0.5;
+                    laika.y = this.entorno.alto() - 20;
+                }
             } else {
                 autos[i].dibujarse(this.entorno);
                 autos[i].mover(this.entorno);
+                if (colissionCheck(autos[i])) {
+                    laika.x = this.entorno.ancho() * 0.5;
+                    laika.y = this.entorno.alto() - 20;
+                }
             }
         }
 
@@ -94,11 +114,20 @@ public class Juego extends InterfaceJuego {
         entorno.escribirTexto("posicion en y:" + laika.y, barra.ancho / 1.5, barra.y);
     }
 
+    private boolean colissionCheck(Auto auto) {
+        if (laika.x < auto.x + auto.ancho && laika.x + laika.getWidth() > auto.x && laika.y < auto.y + auto.alto
+                && laika.y + laika.getHeight() > auto.y) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     private int restriccionm(Manzana[][] m, Laika a) {
-        for (int i = 0; i < fila; i++) {
-            for (int j = 0; j < columna; j++)
-                if (estaTocando(m[i][j], a, 35) < 5) {
-                    return estaTocando(m[i][j], a, 35);
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < column; j++)
+                if (estaTocando(m[i][j], a, 35.0) < 5) {
+                    return estaTocando(m[i][j], a, 35.0);
                 }
         }
         return 5;
@@ -124,7 +153,6 @@ public class Juego extends InterfaceJuego {
         }
         return 5;
     }
-
 
     public static void main(String[] args) {
         Juego juego = new Juego();
