@@ -16,11 +16,15 @@ public class  Juego extends InterfaceJuego {
     Barra barra;
     Auto[] autos;
     Manzana[][] manzanas;
+    Rayo[] rayos;
+
 
     // Variables de setup
+    int vidas = 2;
     int row = 2;
     int column = 3;
     int carsAmount = 4;
+    private int numRayos;
 
     public Juego() {
         // Inicializa el objeto entorno
@@ -34,6 +38,9 @@ public class  Juego extends InterfaceJuego {
         // Inicializar lo que haga falta para el juego
         barra = new Barra(windowMiddle, windowY - 20, windowX, 80);
         laika = new Laika(windowMiddle, barra.y - barra.alto);
+
+        rayos = new Rayo[10000];
+
 
         // Setup Manzanas
         manzanas = new Manzana[row][column];
@@ -69,6 +76,7 @@ public class  Juego extends InterfaceJuego {
      */
     public void tick() {
         // Procesamiento de un instante de tiempo
+
         if (entorno.estaPresionada(entorno.TECLA_DERECHA) && restriccionm(manzanas, laika) != 1) {
             laika.mover(1, this.entorno);
         }
@@ -80,6 +88,25 @@ public class  Juego extends InterfaceJuego {
         }
         if (entorno.estaPresionada(entorno.TECLA_ARRIBA) && restriccionm(manzanas, laika) != 0) {
             laika.mover(0, this.entorno);
+        }
+
+
+        if (entorno.sePresiono(' ')) {
+            if (numRayos < rayos.length) {
+                rayos[numRayos] = new Rayo(laika.x, laika.y, 0.23);
+                numRayos++; }
+        }
+
+
+        for (int i = 0; i < numRayos; i++) {
+            rayos[i].mover();
+            rayos[i].dibujarse(this.entorno);
+
+            if (rayos[i].y < 0) {
+                rayos[i] = rayos[numRayos - 1];
+                rayos[numRayos - 1] = null;
+                numRayos--;
+            }
         }
 
         for (int i = 0; i < row; i++) {
@@ -112,11 +139,18 @@ public class  Juego extends InterfaceJuego {
 
         entorno.escribirTexto("posicion en x:" + laika.x, barra.ancho / 1.2, barra.y);
         entorno.escribirTexto("posicion en y:" + laika.y, barra.ancho / 1.5, barra.y);
+        entorno.escribirTexto("Vidas: " + vidas, barra.ancho/barra.ancho, barra.y);
+
+        if(vidas == 1) {
+            entorno.cambiarFont("Arial", 150, Color.RED);
+            entorno.escribirTexto("Perdiste", 250,384);
+        }
     }
 
     private boolean colissionCheck(Auto auto) {
         if (laika.x < auto.x + auto.ancho && laika.x + laika.getWidth() > auto.x && laika.y < auto.y + auto.alto
                 && laika.y + laika.getHeight() > auto.y) {
+            vidas -= 1;
             return true;
         } else {
             return false;
