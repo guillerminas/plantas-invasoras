@@ -7,40 +7,45 @@ import entorno.Entorno;
 import entorno.Herramientas;
 import entorno.InterfaceJuego;
 
-public class  Juego extends InterfaceJuego {
-    // El objeto Entorno que controla el tiempo y otros
+public class Juego extends InterfaceJuego {
+
+    /***************************************
+     * Declaracion de Objetos y auxiliares *
+     ***************************************/
+
     Entorno entorno;
 
-    // Variables y métodos propios de cada grupo
     Laika laika;
     Barra barra;
+
+    Planta[] plantas;
     Auto[] autos;
-    Manzana[][] manzanas;
     Rayo[] rayos;
+    Manzana[][] manzanas;
 
+    // Auxiliares de Setup
 
-    // Variables de setup
-    int vidas = 2;
+    // int vidas = 2;
     int row = 2;
     int column = 3;
     int carsAmount = 4;
-    private int numRayos;
+    int numRayos = 0;
+
+    // Pantalla
+    int windowX = 1024;
+    int windowY = 768;
+    double windowMiddle = windowX * 0.5;
+    double barraDefinedY = windowY - 20;
 
     public Juego() {
         // Inicializa el objeto entorno
-        this.entorno = new Entorno(this, "Plantas Invasoras - Grupo 2 - v1", 1024, 768);
-
-        // Medidas de la pantalla
-        int windowX = this.entorno.ancho();
-        double windowMiddle = windowX * 0.5;
-        int windowY = this.entorno.alto();
+        this.entorno = new Entorno(this, "Plantas Invasoras - Grupo 2 - v1", windowX, windowY);
 
         // Inicializar lo que haga falta para el juego
-        barra = new Barra(windowMiddle, windowY - 20, windowX, 80);
+        barra = new Barra(windowMiddle, barraDefinedY, windowX, 80);
         laika = new Laika(windowMiddle, barra.y - barra.alto);
 
         rayos = new Rayo[10000];
-
 
         // Setup Manzanas
         manzanas = new Manzana[row][column];
@@ -56,11 +61,11 @@ public class  Juego extends InterfaceJuego {
         // Setup Autos
         autos = new Auto[carsAmount];
         for (int i = 0; i < autos.length; i++) {
-            double random = ThreadLocalRandom.current().nextDouble(1.5, 5);
+            double speed = ThreadLocalRandom.current().nextDouble(2, 5);
             if (i % 2 == 0) {
-                autos[i] = new Auto(30, 255 * i + windowY / 7.5, 0.30, random, 1);
+                autos[i] = new Auto(30, 255 * i + windowY / 7.5, 0.20, speed, 1);
             } else {
-                autos[i] = new Auto(260 * i + windowX / 7.5, 30, 0.30, random, 2);
+                autos[i] = new Auto(260 * i + windowX / 7.5, 30, 0.20, speed, 2);
             }
         }
 
@@ -68,35 +73,40 @@ public class  Juego extends InterfaceJuego {
         this.entorno.iniciar();
     }
 
-    /**
+    /*
      * Durante el juego, el método tick() será ejecutado en cada instante y
      * por lo tanto es el método más importante de esta clase. Aquí se debe
      * actualizar el estado interno del juego para simular el paso del tiempo
-     * (ver el enunciado del TP para mayor detalle).
+     * (ver el enunciado del TP para mayor detalle). *
      */
+
     public void tick() {
         // Procesamiento de un instante de tiempo
 
-        if (entorno.estaPresionada(entorno.TECLA_DERECHA) && restriccionm(manzanas, laika) != 1) {
+        if (entorno.estaPresionada(entorno.TECLA_DERECHA) && restriccionLaika(manzanas, laika) != 1) {
             laika.mover(1, this.entorno);
         }
-        if (entorno.estaPresionada(entorno.TECLA_IZQUIERDA) && restriccionm(manzanas, laika) != 3) {
+        if (entorno.estaPresionada(entorno.TECLA_IZQUIERDA) && restriccionLaika(manzanas, laika) != 3) {
             laika.mover(3, this.entorno);
         }
-        if (entorno.estaPresionada(entorno.TECLA_ABAJO) && restriccionm(manzanas, laika) != 2) {
+        if (entorno.estaPresionada(entorno.TECLA_ABAJO) && restriccionLaika(manzanas, laika) != 2) {
             laika.mover(2, this.entorno);
         }
-        if (entorno.estaPresionada(entorno.TECLA_ARRIBA) && restriccionm(manzanas, laika) != 0) {
+        if (entorno.estaPresionada(entorno.TECLA_ARRIBA) && restriccionLaika(manzanas, laika) != 0) {
             laika.mover(0, this.entorno);
         }
 
+        /***********************
+         * Tick de los Objetos *
+         ***********************/
 
+        // Rayo
         if (entorno.sePresiono(' ')) {
             if (numRayos < rayos.length) {
                 rayos[numRayos] = new Rayo(laika.x, laika.y, 0.23);
-                numRayos++; }
+                numRayos++;
+            }
         }
-
 
         for (int i = 0; i < numRayos; i++) {
             rayos[i].mover();
@@ -109,27 +119,49 @@ public class  Juego extends InterfaceJuego {
             }
         }
 
+        // Manzana
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < column; j++) {
                 manzanas[i][j].dibujarse(this.entorno);
             }
         }
 
+        // Autos
         for (int i = 0; i < autos.length; i++) {
+            int r = randomNumber();
             if (i % 2 == 0) {
                 autos[i].dibujarse(this.entorno);
                 autos[i].mover(this.entorno);
-                if (colissionCheck(autos[i])) {
-                    laika.x = this.entorno.ancho() * 0.5;
-                    laika.y = this.entorno.alto() - 20;
+
+                if (colissionCheckLaika(autos[i])) {
+                    laika.x = windowMiddle;
+                    laika.y = barraDefinedY;
                 }
+
+                if (autos[i].direccion == restriccionAuto(manzanas, autos[i])) {
+                    if (r != autos[i].direccion) {
+                        autos[i].direccion = r;
+                    }
+                }
+
             } else {
                 autos[i].dibujarse(this.entorno);
                 autos[i].mover(this.entorno);
-                if (colissionCheck(autos[i])) {
-                    laika.x = this.entorno.ancho() * 0.5;
-                    laika.y = this.entorno.alto() - 20;
+
+                if (colissionCheckLaika(autos[i])) {
+                    laika.x = windowMiddle;
+                    laika.y = barraDefinedY;
                 }
+
+                if (autos[i].direccion == restriccionAuto(manzanas, autos[i])) {
+                    if (r != autos[i].direccion) {
+                        autos[i].direccion = r;
+                    }
+                }
+
+                // if (colissionCheckManzana(manzanas, autos[i])) {
+                // autos[i].direccion = 1;
+                // }
             }
         }
 
@@ -139,35 +171,87 @@ public class  Juego extends InterfaceJuego {
 
         entorno.escribirTexto("posicion en x:" + laika.x, barra.ancho / 1.2, barra.y);
         entorno.escribirTexto("posicion en y:" + laika.y, barra.ancho / 1.5, barra.y);
-        entorno.escribirTexto("Vidas: " + vidas, barra.ancho/barra.ancho, barra.y);
+        // entorno.escribirTexto("Vidas: " + vidas, barra.ancho / barra.ancho, barra.y);
 
-        if(vidas == 1) {
-            entorno.cambiarFont("Arial", 150, Color.RED);
-            entorno.escribirTexto("Perdiste", 250,384);
-        }
+        // if (vidas == 1) {
+        // entorno.cambiarFont("Arial", 150, Color.RED);
+        // entorno.escribirTexto("Perdiste", 250, 384);
+        // }
     }
 
-    private boolean colissionCheck(Auto auto) {
+    /**********************
+     * Metodos auxiliares *
+     **********************/
+
+    private boolean colissionCheckLaika(Auto auto) {
         if (laika.x < auto.x + auto.ancho && laika.x + laika.getWidth() > auto.x && laika.y < auto.y + auto.alto
                 && laika.y + laika.getHeight() > auto.y) {
-            vidas -= 1;
+            // vidas -= 1;
             return true;
         } else {
             return false;
         }
     }
 
-    private int restriccionm(Manzana[][] m, Laika a) {
+    // private boolean colissionCheckManzana(Manzana[][] m, Auto auto) {
+    // for (int i = 0; i < row; i++) {
+    // for (int j = 0; j < column; j++) {
+    // Manzana manzana = m[i][j];
+    // if (manzana.x < auto.x + auto.ancho && manzana.x + manzana.ancho > auto.x
+    // && manzana.y < auto.y + auto.alto && manzana.y + manzana.alto > auto.y) {
+    // return true;
+    // }
+    // }
+    // }
+    // return false;
+    // }
+
+    private int randomNumber() {
+        return ThreadLocalRandom.current().nextInt(4);
+    }
+
+    private int restriccionLaika(Manzana[][] m, Laika a) {
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < column; j++)
-                if (estaTocando(m[i][j], a, 35.0) < 5) {
-                    return estaTocando(m[i][j], a, 35.0);
+                if (estaTocandoLaika(m[i][j], a, 35.0) < 5) {
+                    return estaTocandoLaika(m[i][j], a, 35.0);
                 }
         }
         return 5;
     }
 
-    public int estaTocando(Manzana m, Laika a, double guarda) {
+    private int restriccionAuto(Manzana[][] m, Auto a) {
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < column; j++)
+                if (estaTocandoAuto(m[i][j], a, 35.0) < 5) {
+                    return estaTocandoAuto(m[i][j], a, 35.0);
+                }
+        }
+        return 5;
+    }
+
+    public int estaTocandoLaika(Manzana m, Laika a, double guarda) {
+        double lado_izquierdo = m.x - m.ancho / 2;
+        double lado_arriba = m.y - m.alto / 2;
+        double lado_abajo = m.y + m.alto / 2;
+        double lado_derecho = m.x + m.ancho / 2;
+
+        if (a.y < lado_abajo && a.y > lado_arriba && a.x > lado_izquierdo - guarda && a.x < lado_derecho) {
+            return 1;
+        }
+        if (a.y < lado_abajo && a.y > lado_arriba && a.x > lado_izquierdo && a.x < lado_derecho + guarda) {
+            return 3;
+        }
+        if (a.y < lado_abajo && a.y > lado_arriba - guarda && a.x > lado_izquierdo && a.x < lado_derecho) {
+            return 2;
+        }
+        if (a.y < lado_abajo + guarda && a.y > lado_arriba && a.x > lado_izquierdo && a.x < lado_derecho) {
+            return 0;
+        }
+        return 5;
+    }
+
+    public int estaTocandoAuto(Manzana m, Auto a, double guarda) {
         double lado_izquierdo = m.x - m.ancho / 2;
         double lado_arriba = m.y - m.alto / 2;
         double lado_abajo = m.y + m.alto / 2;
