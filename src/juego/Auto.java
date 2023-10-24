@@ -27,6 +27,7 @@ public class Auto {
     }
 
     void mover(Entorno e) {
+
         if (direccion == 0) {
             y -= this.velocidad;
         }
@@ -43,19 +44,19 @@ public class Auto {
             x -= this.velocidad;
         }
 
-        if (x > e.ancho() - 30) {
+        if (x > e.ancho() - 35) {
             this.direccion = 3;
         }
 
-        if (y < 10) {
+        if (y < 35) {
             this.direccion = 2;
         }
 
-        if (y > e.alto() - 80) {
+        if (y > e.alto() - 90) {
             this.direccion = 0;
         }
 
-        if (x < 20) {
+        if (x < 35) {
             this.direccion = 1;
         }
     }
