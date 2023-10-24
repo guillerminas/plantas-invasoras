@@ -14,6 +14,7 @@ public class Juego extends InterfaceJuego {
      ***************************************/
 
     Entorno entorno;
+    Menu menu;
 
     Laika laika;
     Barra barra;
@@ -28,7 +29,8 @@ public class Juego extends InterfaceJuego {
     // int vidas = 2;
     int row = 2;
     int column = 3;
-    int carsAmount = 4;
+    int numAutos = 4;
+    int numPlantas = 6;
     int numRayos = 0;
 
     // Pantalla
@@ -40,6 +42,7 @@ public class Juego extends InterfaceJuego {
     public Juego() {
         // Inicializa el objeto entorno
         this.entorno = new Entorno(this, "Plantas Invasoras - Grupo 2 - v1", windowX, windowY);
+        this.menu = new Menu(this.entorno);
 
         // Inicializar lo que haga falta para el juego
         barra = new Barra(windowMiddle, barraDefinedY, windowX, 80);
@@ -59,13 +62,13 @@ public class Juego extends InterfaceJuego {
         manzanas[1][2] = new Manzana(windowMiddle * 1.56, row1, 0.30);
 
         // Setup Autos
-        autos = new Auto[carsAmount];
+        autos = new Auto[numAutos];
         for (int i = 0; i < autos.length; i++) {
             double speed = ThreadLocalRandom.current().nextDouble(2, 5);
             if (i % 2 == 0) {
                 autos[i] = new Auto(30, 255 * i + windowY / 7.5, 0.20, speed, 1);
             } else {
-                autos[i] = new Auto(260 * i + windowX / 7.5, 30, 0.20, speed, 2);
+                autos[i] = new Auto(255 * i + windowX / 7.5, 30, 0.20, speed, 2);
             }
         }
 
@@ -81,102 +84,93 @@ public class Juego extends InterfaceJuego {
      */
 
     public void tick() {
-        // Procesamiento de un instante de tiempo
+        /********
+         * Menu *
+         ********/
 
-        if (entorno.estaPresionada(entorno.TECLA_DERECHA) && restriccionLaika(manzanas, laika) != 1) {
-            laika.mover(1, this.entorno);
-        }
-        if (entorno.estaPresionada(entorno.TECLA_IZQUIERDA) && restriccionLaika(manzanas, laika) != 3) {
-            laika.mover(3, this.entorno);
-        }
-        if (entorno.estaPresionada(entorno.TECLA_ABAJO) && restriccionLaika(manzanas, laika) != 2) {
-            laika.mover(2, this.entorno);
-        }
-        if (entorno.estaPresionada(entorno.TECLA_ARRIBA) && restriccionLaika(manzanas, laika) != 0) {
-            laika.mover(0, this.entorno);
-        }
-
-        /***********************
-         * Tick de los Objetos *
-         ***********************/
-
-        // Rayo
-        if (entorno.sePresiono(' ')) {
-            if (numRayos < rayos.length) {
-                rayos[numRayos] = new Rayo(laika.x, laika.y, 0.23);
-                numRayos++;
+        if (!menu.juegoIniciado()) {
+            menu.dibujarMenu();
+            if (this.entorno.sePresiono(this.entorno.TECLA_ESPACIO)) {
+                menu.procesarTecla(this.entorno.TECLA_ESPACIO);
             }
-        }
-
-        for (int i = 0; i < numRayos; i++) {
-            rayos[i].mover();
-            rayos[i].dibujarse(this.entorno);
-
-            if (rayos[i].y < 0) {
-                rayos[i] = rayos[numRayos - 1];
-                rayos[numRayos - 1] = null;
-                numRayos--;
+        } else {
+            if (entorno.estaPresionada(entorno.TECLA_DERECHA) && restriccionLaika(manzanas, laika) != 1) {
+                laika.mover(1, this.entorno);
             }
-        }
-
-        // Manzana
-        for (int i = 0; i < row; i++) {
-            for (int j = 0; j < column; j++) {
-                manzanas[i][j].dibujarse(this.entorno);
+            if (entorno.estaPresionada(entorno.TECLA_IZQUIERDA) && restriccionLaika(manzanas, laika) != 3) {
+                laika.mover(3, this.entorno);
             }
-        }
+            if (entorno.estaPresionada(entorno.TECLA_ABAJO) && restriccionLaika(manzanas, laika) != 2) {
+                laika.mover(2, this.entorno);
+            }
+            if (entorno.estaPresionada(entorno.TECLA_ARRIBA) && restriccionLaika(manzanas, laika) != 0) {
+                laika.mover(0, this.entorno);
+            }
 
-        // Autos
-        for (int i = 0; i < autos.length; i++) {
-            int r = randomNumber();
-            if (i % 2 == 0) {
-                autos[i].dibujarse(this.entorno);
-                autos[i].mover(this.entorno);
+            /***********************
+             * Tick de los Objetos *
+             **********************/
 
-                if (colissionCheckLaika(autos[i])) {
-                    laika.x = windowMiddle;
-                    laika.y = barraDefinedY;
+            // Rayo
+            if (this.entorno.sePresiono(this.entorno.TECLA_ESPACIO)) {
+                if (numRayos < rayos.length) {
+                    rayos[numRayos] = new Rayo(laika.x, laika.y, 0.23, laika.direccion);
+                    numRayos++;
                 }
+            }
 
-                if (autos[i].direccion == restriccionAuto(manzanas, autos[i])) {
-                    if (r != autos[i].direccion) {
-                        autos[i].direccion = r;
+            for (int i = 0; i < numRayos; i++) {
+                rayos[i].mover();
+                rayos[i].dibujarse(this.entorno);
+
+                if (rayos[i].y < 0) {
+                    rayos[i] = rayos[numRayos - 1];
+                    rayos[numRayos - 1] = null;
+                    numRayos--;
+                }
+            }
+
+            // Manzana
+            for (int i = 0; i < row; i++) {
+                for (int j = 0; j < column; j++) {
+                    manzanas[i][j].dibujarse(this.entorno);
+                }
+            }
+
+            // Autos
+            for (int i = 0; i < autos.length; i++) {
+                if (i % 2 == 0) {
+                    autos[i].dibujarse(this.entorno);
+                    autos[i].mover(this.entorno);
+
+                    if (colissionCheckLaika(autos[i])) {
+                        laika.x = windowMiddle;
+                        laika.y = barraDefinedY;
+                    }
+                } else {
+                    autos[i].dibujarse(this.entorno);
+                    autos[i].mover(this.entorno);
+
+                    if (colissionCheckLaika(autos[i])) {
+                        laika.x = windowMiddle;
+                        laika.y = barraDefinedY;
                     }
                 }
-
-            } else {
-                autos[i].dibujarse(this.entorno);
-                autos[i].mover(this.entorno);
-
-                if (colissionCheckLaika(autos[i])) {
-                    laika.x = windowMiddle;
-                    laika.y = barraDefinedY;
-                }
-
-                if (autos[i].direccion == restriccionAuto(manzanas, autos[i])) {
-                    if (r != autos[i].direccion) {
-                        autos[i].direccion = r;
-                    }
-                }
-
-                // if (colissionCheckManzana(manzanas, autos[i])) {
-                // autos[i].direccion = 1;
-                // }
             }
+
+            laika.dibujarse(this.entorno);
+            barra.dibujarse(this.entorno);
+            entorno.cambiarFont("Arial", 18, Color.black);
+
+            entorno.escribirTexto("posicion en x:" + laika.x, barra.ancho / 1.2, barra.y);
+            entorno.escribirTexto("posicion en y:" + laika.y, barra.ancho / 1.5, barra.y);
+            // entorno.escribirTexto("Vidas: " + vidas, barra.ancho / barra.ancho, barra.y);
+
+            // if (vidas == 1) {
+            // entorno.cambiarFont("Arial", 150, Color.RED);
+            // entorno.escribirTexto("Perdiste", 250, 384);
+            // }
         }
-
-        laika.dibujarse(this.entorno);
-        barra.dibujarse(this.entorno);
-        entorno.cambiarFont("Arial", 18, Color.black);
-
-        entorno.escribirTexto("posicion en x:" + laika.x, barra.ancho / 1.2, barra.y);
-        entorno.escribirTexto("posicion en y:" + laika.y, barra.ancho / 1.5, barra.y);
-        // entorno.escribirTexto("Vidas: " + vidas, barra.ancho / barra.ancho, barra.y);
-
-        // if (vidas == 1) {
-        // entorno.cambiarFont("Arial", 150, Color.RED);
-        // entorno.escribirTexto("Perdiste", 250, 384);
-        // }
     }
 
     /**********************
@@ -193,23 +187,6 @@ public class Juego extends InterfaceJuego {
         }
     }
 
-    // private boolean colissionCheckManzana(Manzana[][] m, Auto auto) {
-    // for (int i = 0; i < row; i++) {
-    // for (int j = 0; j < column; j++) {
-    // Manzana manzana = m[i][j];
-    // if (manzana.x < auto.x + auto.ancho && manzana.x + manzana.ancho > auto.x
-    // && manzana.y < auto.y + auto.alto && manzana.y + manzana.alto > auto.y) {
-    // return true;
-    // }
-    // }
-    // }
-    // return false;
-    // }
-
-    private int randomNumber() {
-        return ThreadLocalRandom.current().nextInt(4);
-    }
-
     private int restriccionLaika(Manzana[][] m, Laika a) {
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < column; j++)
@@ -220,38 +197,7 @@ public class Juego extends InterfaceJuego {
         return 5;
     }
 
-    private int restriccionAuto(Manzana[][] m, Auto a) {
-        for (int i = 0; i < row; i++) {
-            for (int j = 0; j < column; j++)
-                if (estaTocandoAuto(m[i][j], a, 35.0) < 5) {
-                    return estaTocandoAuto(m[i][j], a, 35.0);
-                }
-        }
-        return 5;
-    }
-
     public int estaTocandoLaika(Manzana m, Laika a, double guarda) {
-        double lado_izquierdo = m.x - m.ancho / 2;
-        double lado_arriba = m.y - m.alto / 2;
-        double lado_abajo = m.y + m.alto / 2;
-        double lado_derecho = m.x + m.ancho / 2;
-
-        if (a.y < lado_abajo && a.y > lado_arriba && a.x > lado_izquierdo - guarda && a.x < lado_derecho) {
-            return 1;
-        }
-        if (a.y < lado_abajo && a.y > lado_arriba && a.x > lado_izquierdo && a.x < lado_derecho + guarda) {
-            return 3;
-        }
-        if (a.y < lado_abajo && a.y > lado_arriba - guarda && a.x > lado_izquierdo && a.x < lado_derecho) {
-            return 2;
-        }
-        if (a.y < lado_abajo + guarda && a.y > lado_arriba && a.x > lado_izquierdo && a.x < lado_derecho) {
-            return 0;
-        }
-        return 5;
-    }
-
-    public int estaTocandoAuto(Manzana m, Auto a, double guarda) {
         double lado_izquierdo = m.x - m.ancho / 2;
         double lado_arriba = m.y - m.alto / 2;
         double lado_abajo = m.y + m.alto / 2;

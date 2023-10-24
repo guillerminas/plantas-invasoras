@@ -1,7 +1,6 @@
 package juego;
 
 import java.awt.Image;
-import java.util.concurrent.ThreadLocalRandom;
 
 import entorno.Entorno;
 import entorno.Herramientas;
@@ -28,7 +27,6 @@ public class Auto {
     }
 
     void mover(Entorno e) {
-        int r = ThreadLocalRandom.current().nextInt(4);
 
         if (direccion == 0) {
             y -= this.velocidad;
@@ -46,20 +44,20 @@ public class Auto {
             x -= this.velocidad;
         }
 
-        if (x > e.ancho() - 35 && r != 1) {
-            this.direccion = r;
+        if (x > e.ancho() - 35) {
+            this.direccion = 3;
         }
 
-        if (y < 35 && r != 0) {
-            this.direccion = r;
+        if (y < 35) {
+            this.direccion = 2;
         }
 
-        if (y > e.alto() - 90 && r != 2) {
-            this.direccion = r;
+        if (y > e.alto() - 90) {
+            this.direccion = 0;
         }
 
-        if (x < 35 && r != 3) {
-            this.direccion = r;
+        if (x < 35) {
+            this.direccion = 1;
         }
     }
 }
