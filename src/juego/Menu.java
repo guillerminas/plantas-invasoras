@@ -1,45 +1,34 @@
 package juego;
 
-import entorno.Entorno;
-
 import java.awt.*;
+
+import entorno.Entorno;
 
 public class Menu {
     Entorno entorno;
-    private boolean juegoIniciado = false;
+    Rectangle botonJugar;
 
     public Menu(Entorno entorno) {
         this.entorno = entorno;
+        this.botonJugar = new Rectangle(500, 360, 300, 100);
     }
 
     public void dibujarMenu() {
-        // Lógica para dibujar el menú, por ejemplo, dibujar botones y texto
-        this.entorno.cambiarFont("Arial", 40, Color.WHITE);
-        this.entorno.escribirTexto(
-                "Plantas Invasoras",
-                this.entorno.ancho() * 0.35,
-                this.entorno.alto() * 0.18);
+        entorno.cambiarFont("Arial", 24, Color.WHITE);
+        entorno.escribirTexto("Haz clic en 'Jugar' para empezar", 350, 290);
 
-        this.entorno.cambiarFont("Arial", 30, Color.WHITE);
-        this.entorno.escribirTexto(
-                "Presione ESPACIO para empezar",
-                this.entorno.ancho() * 0.28,
-                this.entorno.alto() * 0.56);
+        int x = (int) botonJugar.getX();
+        int y = (int) botonJugar.getY();
+        int width = (int) botonJugar.getWidth();
+        int height = (int) botonJugar.getHeight();
 
-        this.entorno.cambiarFont("Arial", 27, Color.WHITE);
-        this.entorno.escribirTexto(
-                "Presione ESCAPE para salir",
-                this.entorno.ancho() * 0.33,
-                this.entorno.alto() * 0.64);
+        // Dibujar botón "Jugar"
+        entorno.dibujarRectangulo(x, y, width, height, 0, Color.GREEN);
+        entorno.cambiarFont("Arial", 60, Color.BLACK);
+        entorno.escribirTexto("Jugar", x - 55, y + 20);
     }
 
-    public boolean juegoIniciado() {
-        return juegoIniciado;
-    }
-
-    public void procesarTecla(char tecla) {
-        if (tecla == entorno.TECLA_ESPACIO) {
-            juegoIniciado = true;
-        }
+    public boolean procesarClick(int x, int y) {
+        return botonJugar.contains(x, y);
     }
 }

@@ -1,13 +1,14 @@
 package juego;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.concurrent.ThreadLocalRandom;
 
 import entorno.Entorno;
-import entorno.Herramientas;
 import entorno.InterfaceJuego;
 
-public class Juego extends InterfaceJuego {
+public class Juego extends InterfaceJuego implements MouseListener {
 
     /***************************************
      * Declaracion de Objetos y auxiliares *
@@ -38,11 +39,14 @@ public class Juego extends InterfaceJuego {
     int windowY = 768;
     double windowMiddle = windowX * 0.5;
     double barraDefinedY = windowY - 20;
+    boolean enMenu = true;
 
     public Juego() {
         // Inicializa el objeto entorno
+
         this.entorno = new Entorno(this, "Plantas Invasoras - Grupo 2 - v1", windowX, windowY);
         this.menu = new Menu(this.entorno);
+        this.entorno.addMouseListener(this);
 
         // Inicializar lo que haga falta para el juego
         barra = new Barra(windowMiddle, barraDefinedY, windowX, 80);
@@ -52,8 +56,8 @@ public class Juego extends InterfaceJuego {
 
         // Setup Manzanas
         manzanas = new Manzana[row][column];
-        double row0 = (768 / 2) / 1.8;
-        double row1 = (768 / 2) * 1.3;
+        double row0 = (windowY / 2) / 1.8;
+        double row1 = (windowY / 2) * 1.3;
         manzanas[0][0] = new Manzana(windowMiddle / 2.3, row0, 0.30);
         manzanas[0][1] = new Manzana(windowMiddle, row0, 0.30);
         manzanas[0][2] = new Manzana(windowMiddle * 1.56, row0, 0.30);
@@ -84,16 +88,10 @@ public class Juego extends InterfaceJuego {
      */
 
     public void tick() {
-        /********
-         * Menu *
-         ********/
-
-        if (!menu.juegoIniciado()) {
+        if (enMenu) {
             menu.dibujarMenu();
-            if (this.entorno.sePresiono(this.entorno.TECLA_ESPACIO)) {
-                menu.procesarTecla(this.entorno.TECLA_ESPACIO);
-            }
         } else {
+
             if (entorno.estaPresionada(entorno.TECLA_DERECHA) && restriccionLaika(manzanas, laika) != 1) {
                 laika.mover(1, this.entorno);
             }
@@ -107,7 +105,7 @@ public class Juego extends InterfaceJuego {
                 laika.mover(0, this.entorno);
             }
 
-            /***********************
+             /**********************
              * Tick de los Objetos *
              **********************/
 
@@ -177,6 +175,15 @@ public class Juego extends InterfaceJuego {
      * Metodos auxiliares *
      **********************/
 
+    public void mousePressed(MouseEvent e) {
+        int mouseX = e.getX();
+        int mouseY = e.getY();
+
+        if (enMenu && menu.procesarClick(mouseX, mouseY)) {
+            enMenu = false;
+        }
+    }
+
     private boolean colissionCheckLaika(Auto auto) {
         if (laika.x < auto.x + auto.ancho && laika.x + laika.getWidth() > auto.x && laika.y < auto.y + auto.alto
                 && laika.y + laika.getHeight() > auto.y) {
@@ -217,6 +224,13 @@ public class Juego extends InterfaceJuego {
         }
         return 5;
     }
+
+    // Implementa los otros métodos de la interfaz MouseListener
+    public void mouseClicked(MouseEvent e) {}
+    public void mouseReleased(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {}
+
 
     public static void main(String[] args) {
         Juego juego = new Juego();
