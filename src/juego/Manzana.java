@@ -29,4 +29,13 @@ public class Manzana {
     public double ancho() {
         return this.ancho;
     }
+
+    public boolean intersects(double x, double y, double width, double height) {
+        double left = this.x - this.ancho / 2;
+        double right = this.x + this.ancho / 2;
+        double top = this.y - this.alto / 2;
+        double bottom = this.y + this.alto / 2;
+
+        return !(left > x + width || right < x || top > y + height || bottom < y);
+    }
 }
