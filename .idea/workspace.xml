@@ -5,8 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f78964a5-941f-4ed8-bb87-cb12becbf887" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/juego/Auto.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/juego/Auto.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/juego/Barra.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/juego/Barra.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/juego/BolaFuego.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/juego/Calle.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/juego/Calle.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/juego/Juego.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/juego/Juego.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/juego/Laika.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/juego/Laika.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/juego/Manzana.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/juego/Manzana.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/juego/Planta.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/juego/Planta.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/juego/Rayo.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/juego/Rayo.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/juego/BolaFuego.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/juego/BolaDeFuego.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/juego/Calle.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/juego/Calle.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/juego/Juego.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/juego/Juego.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/juego/Planta.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/juego/Planta.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

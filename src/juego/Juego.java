@@ -23,8 +23,9 @@ public class Juego extends InterfaceJuego {
     static Planta[] plantas;
     Auto[] autos;
     Rayo[] rayos;
+    BolaDeFuego[] bolasDeFuego;
     static Manzana[] manzanas;
-    // Manzana[][] manzanas;
+
 
     // Auxiliares de Setup
 
@@ -32,8 +33,10 @@ public class Juego extends InterfaceJuego {
     int row = 2;
     int column = 3;
     int numAutos = 4;
-    static int numPlantas = 6;
+    static int numPlantas = 4;
     int numRayos = 0;
+    int numBolasDeFuego = 0;
+    int temp = 120;
 
     // Pantalla
     static int windowX = 1024;
@@ -51,6 +54,7 @@ public class Juego extends InterfaceJuego {
         laika = new Laika(windowMiddle, barra.y - barra.alto);
 
         rayos = new Rayo[10000];
+        bolasDeFuego = new BolaDeFuego[300];
 
         // Setup Manzana
         manzanas = new Manzana[12];
@@ -65,6 +69,48 @@ public class Juego extends InterfaceJuego {
             }
         }
 
+        // Inicializar las calles
+        /* calles = new Calle[18];
+        for (int i = 0; i <= 10; i++) {
+            if (i % 2 == 0) {
+                double x = (i + 60);
+                double y = 384;
+                double ancho = 60;
+                double alto = 1024;
+                int grados = 180;
+                calles[i] = new Calle(x,y,ancho,alto,grados);
+            }
+            if (i % 2 == 1) {
+                double x = (i + 160);
+                double y = 384;
+                double ancho = 60;
+                double alto = 1024;
+                int grados = 180;
+                calles[i] = new Calle(x,y,ancho,alto,grados);
+            }
+        }
+
+        for (int i = 10; i < 18; i++) {
+            if (i % 2 == 0) {
+                double x = 512;
+                double y = (i + 60);
+                double ancho = 60;
+                double alto = 1024;
+                int grados = 0;
+                calles[i] = new Calle(x,y,ancho,alto,grados);
+            }
+            if (i % 2 == 1) {
+                double x = 512;
+                double y = (i + 160);
+                double ancho = 60;
+                double alto = 1024;
+                int grados = 0;
+                calles[i] = new Calle(x,y,ancho,alto,grados);
+            }
+
+        } */
+
+
         // Setup Autos
         autos = new Auto[numAutos];
         autos[0] = new Auto(260, windowY * 0.156, 0.18, 2, 2);
@@ -73,20 +119,17 @@ public class Juego extends InterfaceJuego {
         autos[3] = new Auto(772, windowY * 0.82, 0.18, 2, 0);
 
         // Setup Plantas
-        plantas = new Planta[numPlantas];
-        for (int i = 0; i < plantas.length; i++) {
-            double x = ThreadLocalRandom.current().nextDouble(0, windowX);
-            double y = ThreadLocalRandom.current().nextDouble(0, windowY);
-            double e = 0.18;
-            double velocidad = ThreadLocalRandom.current().nextDouble(1, 3);
-            int direccion = ThreadLocalRandom.current().nextInt(0, 4);
-            plantas[i] = new Planta(x, y, e, velocidad, direccion);
-        }
+        // int r = ThreadLocalRandom.current().nextInt(4);
 
-        // Inicia el juego!
+        plantas = new Planta[numPlantas];
+        plantas[0] = new Planta(260, windowY * 0.156, 0.18, 2, 2);
+        plantas[1] = new Planta(700, windowY * 0.156, 0.18, 2, 2);
+        plantas[2] = new Planta(330, windowY * 0.82, 0.18, 2, 0);
+        plantas[3] = new Planta(772, windowY * 0.82, 0.18, 2, 0);
+
+        // Inicia el juego!|
         this.entorno.iniciar();
     }
-
     /*
      * Durante el juego, el método tick() será ejecutado en cada instante y
      * por lo tanto es el método más importante de esta clase. Aquí se debe
@@ -120,6 +163,8 @@ public class Juego extends InterfaceJuego {
              * Tick de los Objetos *
              **********************/
 
+            temp -= 1;
+
             // Rayo
             if (this.entorno.sePresiono(this.entorno.TECLA_ESPACIO)) {
                 if (numRayos < rayos.length) {
@@ -139,10 +184,11 @@ public class Juego extends InterfaceJuego {
                 }
             }
 
+
             // Manzana
             for (int i = 0; i < row; i++) {
                 for (int j = 0; j < column; j++) {
-                    // manzanas[i][j].dibujarse(this.entorno);
+                    //manzanas[j][i].dibujarse(this.entorno);
                 }
             }
 
@@ -153,7 +199,7 @@ public class Juego extends InterfaceJuego {
             // Autos
             for (int i = 0; i < autos.length; i++) {
                 if (i % 2 == 0) {
-                    autos[i].dibujarse(this.entorno);
+                    // autos[i].dibujarse(this.entorno);
                     // autos[i].mover(this.entorno);
 
                     if (colissionCheckLaika(autos[i])) {
@@ -161,7 +207,7 @@ public class Juego extends InterfaceJuego {
                         laika.y = barraDefinedY;
                     }
                 } else {
-                    autos[i].dibujarse(this.entorno);
+                    // autos[i].dibujarse(this.entorno);
                     // autos[i].mover(this.entorno);
 
                     if (colissionCheckLaika(autos[i])) {
@@ -171,9 +217,26 @@ public class Juego extends InterfaceJuego {
                 }
             }
 
+
+            /* for (int i = 0; i < calles.length; i++) {
+                if (i < 10) {
+                    calles[i].dibujarse(this.entorno);
+                } else {
+                    calles[i].dibujarse(this.entorno);
+                }
+            } */
+
             // Plantas
-            for (int i = 0; i < plantas.length; i++) {
-                if (i < 4) {
+            for (int i = 0; i < autos.length; i++) {
+                if (i % 2 == 0) {
+                    plantas[i].dibujarse(this.entorno);
+                    plantas[i].mover(this.entorno);
+
+                    if (colissionCheckLaika(plantas[i])) {
+                        laika.x = windowMiddle;
+                        laika.y = barraDefinedY;
+                    }
+                } else {
                     plantas[i].dibujarse(this.entorno);
                     plantas[i].mover(this.entorno);
 
@@ -183,11 +246,58 @@ public class Juego extends InterfaceJuego {
                     }
                 }
             }
+
+            if (temp == 0) {
+                int r = ThreadLocalRandom.current().nextInt(plantas.length);
+                Planta p = plantas[r];
+                BolaDeFuego bolaDeFuego = p.dispararBolaDeFuego();
+                bolasDeFuego[numBolasDeFuego] = bolaDeFuego;
+                numBolasDeFuego++;
+                temp = 120;
+            }
+            for (int i = 0; i < numBolasDeFuego; i++) {
+                bolasDeFuego[i].mover();
+                bolasDeFuego[i].dibujarse(this.entorno);
+
+
+                if (bolasDeFuego[i].y < 0) {
+                    bolasDeFuego[i] = bolasDeFuego[numBolasDeFuego - 1];
+                    bolasDeFuego[numBolasDeFuego - 1] = null;
+                    numBolasDeFuego--;
+                }
+            }
+
+            System.out.println(temp);
         }
+
+
+
 
         laika.dibujarse(this.entorno);
         // barra.dibujarse(this.entorno);
         entorno.cambiarFont("Arial", 18, Color.black);
+
+        /* entorno.dibujarRectangulo(30.0,384.0,60.0,1024.0,Herramientas.radianes(180), Color.cyan); //Calle 1 Mano 1
+        entorno.dibujarRectangulo(100.0,384.0,60.0,1024.0,Herramientas.radianes(180), Color.magenta); // Calle 1 Mano 2(70)
+        entorno.dibujarRectangulo(270.0,384.0,60.0,1024.0,Herramientas.radianes(180), Color.cyan); // Calle 2 Mano 1 (170)
+        entorno.dibujarRectangulo(330.0,384.0,60.0,1024.0,Herramientas.radianes(180), Color.magenta); // Calle 2 Mano 2 (60)
+        entorno.dibujarRectangulo(490.0,384.0,60.0,1024.0,Herramientas.radianes(180), Color.cyan); // Calle 3 Mano 1 (160)
+        entorno.dibujarRectangulo(550.0,384.0,60.0,1024.0,Herramientas.radianes(180), Color.magenta); // Calle 3 Mano 2 (60)
+        entorno.dibujarRectangulo(710.0,384.0,60.0,1024.0,Herramientas.radianes(180), Color.cyan); // Calle 4 Mano 1 (160)
+        entorno.dibujarRectangulo(770.0,384.0,60.0,1024.0,Herramientas.radianes(180), Color.magenta); // Calle 4 Mano 2 (60)
+        entorno.dibujarRectangulo(930.0,384.0,60.0,1024.0,Herramientas.radianes(180), Color.cyan); // Calle 5 Mano 1 (160)
+        entorno.dibujarRectangulo(990.0,384.0,60.0,1024.0,Herramientas.radianes(180), Color.magenta); // Calle 5 Mano 2 (60)
+
+        entorno.dibujarRectangulo(512,30,60.0,1024.0,Herramientas.radianes(90), Color.pink); //Calle 6 Mano 1
+        entorno.dibujarRectangulo(512,70,60.0,1024.0,Herramientas.radianes(90), Color.ORANGE); // Calle 6 Mano 2 (40)
+        entorno.dibujarRectangulo(512,230,60.0,1024.0,Herramientas.radianes(90), Color.pink); //Calle 7 Mano 1 (160)
+        entorno.dibujarRectangulo(512,290,60.0,1024.0,Herramientas.radianes(90), Color.ORANGE); // Calle 7 Mano 2 (60)
+        entorno.dibujarRectangulo(512,450,60.0,1024.0,Herramientas.radianes(90), Color.pink); //Calle 8 Mano 1 (160)
+        entorno.dibujarRectangulo(512,510,60.0,1024.0,Herramientas.radianes(90), Color.ORANGE); // Calle 8 Mano 2 (60)
+        entorno.dibujarRectangulo(512,670,60.0,1024.0,Herramientas.radianes(90), Color.pink); //Calle 9 Mano 1 (160)
+        entorno.dibujarRectangulo(512,730,60.0,1024.0,Herramientas.radianes(90), Color.ORANGE); // Calle 9 Mano 2 (60) */
+
+
 
         entorno.escribirTexto("posicion en x:" + laika.x, barra.ancho / 1.2, barra.y);
         entorno.escribirTexto("posicion en y:" + laika.y, barra.ancho / 1.5, barra.y);
@@ -197,6 +307,7 @@ public class Juego extends InterfaceJuego {
         // entorno.cambiarFont("Arial", 150, Color.RED);
         // entorno.escribirTexto("Perdiste", 250, 384);
         // }
+
     }
 
     /**********************

@@ -6,22 +6,22 @@ import entorno.Entorno;
 import entorno.Herramientas;
 
 public class Calle {
-    // Variables de instancia
-    double x, y, ancho, alto;
+    double x;
+    double y;
+    double ancho;
+    double alto;
     int grados;
-    Image img;
+    Color color;
 
-    public Calle(double x, double y, int grados) {
+    public Calle(double x, double y, double ancho, double alto, int grados) {
         this.x = x;
         this.y = y;
+        this.ancho = ancho;
+        this.alto = alto;
         this.grados = grados;
-        this.ancho = 100;
-        this.alto = 700;
-        System.out.println("ancho " + this.ancho + "  alto " + this.alto);
-
     }
 
     public void dibujarse(Entorno entorno) {
-        entorno.dibujarRectangulo(this.x, this.y, this.ancho, this.alto, Herramientas.radianes(this.grados), Color.white);
+        entorno.dibujarRectangulo(this.x, this.y, this.ancho, this.alto, Herramientas.radianes(this.grados), color);
     }
 }
