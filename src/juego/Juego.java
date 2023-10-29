@@ -148,6 +148,8 @@ public class Juego extends InterfaceJuego {
                 menu.procesarTecla(this.entorno.TECLA_ESPACIO);
             }
         } else {
+            Image img = Herramientas.cargarImagen("source/calle.png");
+            entorno.dibujarImagen(img,windowMiddle,windowY*0.5,0);
 
             if (entorno.estaPresionada(entorno.TECLA_DERECHA) && restriccionLaika(manzanas, laika) != 1) {
                 laika.mover(1, this.entorno);
@@ -276,28 +278,6 @@ public class Juego extends InterfaceJuego {
         laika.dibujarse(this.entorno);
         // barra.dibujarse(this.entorno);
         entorno.cambiarFont("Arial", 18, Color.black);
-
-        /* entorno.dibujarRectangulo(30.0,384.0,60.0,1024.0,Herramientas.radianes(180), Color.cyan); //Calle 1 Mano 1
-        entorno.dibujarRectangulo(100.0,384.0,60.0,1024.0,Herramientas.radianes(180), Color.magenta); // Calle 1 Mano 2(70)
-        entorno.dibujarRectangulo(270.0,384.0,60.0,1024.0,Herramientas.radianes(180), Color.cyan); // Calle 2 Mano 1 (170)
-        entorno.dibujarRectangulo(330.0,384.0,60.0,1024.0,Herramientas.radianes(180), Color.magenta); // Calle 2 Mano 2 (60)
-        entorno.dibujarRectangulo(490.0,384.0,60.0,1024.0,Herramientas.radianes(180), Color.cyan); // Calle 3 Mano 1 (160)
-        entorno.dibujarRectangulo(550.0,384.0,60.0,1024.0,Herramientas.radianes(180), Color.magenta); // Calle 3 Mano 2 (60)
-        entorno.dibujarRectangulo(710.0,384.0,60.0,1024.0,Herramientas.radianes(180), Color.cyan); // Calle 4 Mano 1 (160)
-        entorno.dibujarRectangulo(770.0,384.0,60.0,1024.0,Herramientas.radianes(180), Color.magenta); // Calle 4 Mano 2 (60)
-        entorno.dibujarRectangulo(930.0,384.0,60.0,1024.0,Herramientas.radianes(180), Color.cyan); // Calle 5 Mano 1 (160)
-        entorno.dibujarRectangulo(990.0,384.0,60.0,1024.0,Herramientas.radianes(180), Color.magenta); // Calle 5 Mano 2 (60)
-
-        entorno.dibujarRectangulo(512,30,60.0,1024.0,Herramientas.radianes(90), Color.pink); //Calle 6 Mano 1
-        entorno.dibujarRectangulo(512,70,60.0,1024.0,Herramientas.radianes(90), Color.ORANGE); // Calle 6 Mano 2 (40)
-        entorno.dibujarRectangulo(512,230,60.0,1024.0,Herramientas.radianes(90), Color.pink); //Calle 7 Mano 1 (160)
-        entorno.dibujarRectangulo(512,290,60.0,1024.0,Herramientas.radianes(90), Color.ORANGE); // Calle 7 Mano 2 (60)
-        entorno.dibujarRectangulo(512,450,60.0,1024.0,Herramientas.radianes(90), Color.pink); //Calle 8 Mano 1 (160)
-        entorno.dibujarRectangulo(512,510,60.0,1024.0,Herramientas.radianes(90), Color.ORANGE); // Calle 8 Mano 2 (60)
-        entorno.dibujarRectangulo(512,670,60.0,1024.0,Herramientas.radianes(90), Color.pink); //Calle 9 Mano 1 (160)
-        entorno.dibujarRectangulo(512,730,60.0,1024.0,Herramientas.radianes(90), Color.ORANGE); // Calle 9 Mano 2 (60) */
-
-
 
         entorno.escribirTexto("posicion en x:" + laika.x, barra.ancho / 1.2, barra.y);
         entorno.escribirTexto("posicion en y:" + laika.y, barra.ancho / 1.5, barra.y);
